@@ -38,4 +38,12 @@ export const iotaRouter = createRouter()
         },
       });
     },
+  })
+  .mutation("delete", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      return ctx.prisma.iota.delete({ where: { id: input.id } });
+    },
   });

@@ -28,6 +28,7 @@ const Dashboard: NextPage = () => {
   const theme = useTheme();
   const utils = trpc.useContext();
   const createIota = trpc.useMutation(["iota.add"]);
+  const deleteIota = trpc.useMutation(["iota.delete"]);
   const updateProfile = trpc.useMutation(["user.update"]);
   const { data: iotas } = trpc.useQuery(["iota.all"]);
   const { data: profile } = trpc.useQuery(["user.get"]);
@@ -167,6 +168,19 @@ const Dashboard: NextPage = () => {
                       scale={1 / 3}
                       font="12px"
                       ghost
+                      loading={deleteIota.isLoading}
+                      onClick={() =>
+                        deleteIota.mutate(
+                          { id: iota.id },
+                          {
+                            onSuccess: () => {
+                              utils.setQueryData(["iota.all"], (old) =>
+                                (old || []).filter((i) => i.id !== iota.id)
+                              );
+                            },
+                          }
+                        )
+                      }
                     >
                       Delete
                     </Button>
