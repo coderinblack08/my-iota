@@ -1,11 +1,10 @@
 // src/pages/_app.tsx
+import { CssBaseline, GeistProvider } from "@geist-ui/core";
 import { withTRPC } from "@trpc/next";
-import type { AppRouter } from "../server/router";
+import { SessionProvider } from "next-auth/react";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { GeistProvider, CssBaseline, Themes } from "@geist-ui/core";
-import { SessionProvider } from "next-auth/react";
-import "../styles/globals.css";
+import type { AppRouter } from "../server/router";
 
 const MyApp: AppType = ({
   Component,

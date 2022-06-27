@@ -33,6 +33,11 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+enum PrivacyEnum {
+  public
+  private
+}
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -47,8 +52,16 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
+
+  bio       String?
+  privacy   PrivacyEnum @default(public)
+  twitter   String?
+  github    String?
+  instagram String?
+
+  accounts Account[]
+  sessions Session[]
+  Iota     Iota[]
 }
 
 model VerificationToken {
@@ -57,4 +70,13 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Iota {
+  id        String   @id @default(cuid())
+  message   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
