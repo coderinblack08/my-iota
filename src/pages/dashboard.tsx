@@ -28,7 +28,9 @@ const Dashboard: NextPage = () => {
   const theme = useTheme();
   const utils = trpc.useContext();
   const createIota = trpc.useMutation(["iota.add"]);
+  const updateProfile = trpc.useMutation(["user.update"]);
   const { data: iotas } = trpc.useQuery(["iota.all"]);
+  const { data: profile } = trpc.useQuery(["user.get"]);
 
   return (
     <>
@@ -158,49 +160,118 @@ const Dashboard: NextPage = () => {
                     <Button auto scale={1 / 3} font="12px">
                       0 Likes
                     </Button>
+                    <Button
+                      ml={1}
+                      type="error"
+                      auto
+                      scale={1 / 3}
+                      font="12px"
+                      ghost
+                    >
+                      Delete
+                    </Button>
                   </Card.Footer>
                 </Card>
               ))}
             </div>
           </Tabs.Item>
           <Tabs.Item label="Profile" value="2">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: theme.layout.gapHalf,
-              }}
-            >
-              <Input placeholder="Name" width="100%" />
-              <Select placeholder="Choose one privacy setting">
-                <Select.Option value="public">Public</Select.Option>
-                <Select.Option value="private">Private</Select.Option>
-              </Select>
-              <Textarea placeholder="Biography" height={8} width="100%" />
-              <Input
-                placeholder="Twitter username"
-                icon={<Twitter size={16} color={theme.palette.accents_4} />}
-                width="100%"
-              />
-              <Input
-                placeholder="GitHub username"
-                icon={<Github size={16} color={theme.palette.accents_4} />}
-                width="100%"
-              />
-              <Input
-                placeholder="Instagram username"
-                icon={<Instagram size={16} color={theme.palette.accents_4} />}
-                width="100%"
-              />
-              <Fieldset>
-                <Fieldset.Title>Headless API Access</Fieldset.Title>
-                <Fieldset.Subtitle>
-                  Use the access token with our API to access your iota content.
-                  <Snippet text="yarn add iota-client" width="100%" mt={1} />
-                  <Link icon color mt={1}>
-                    View Documentation
-                  </Link>
-                  {/* <div
+            {profile ? (
+              <Formik
+                initialValues={profile}
+                onSubmit={async (values) =>
+                  updateProfile.mutateAsync(values, {
+                    onSuccess: (data) => {
+                      utils.setQueryData(["user.get"], data);
+                    },
+                  })
+                }
+                enableReinitialize
+              >
+                {({ isSubmitting, setFieldValue, values }) => (
+                  <Form
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: theme.layout.gapHalf,
+                    }}
+                  >
+                    <Field
+                      as={Input}
+                      name="name"
+                      placeholder="Name"
+                      width="100%"
+                    />
+                    <Select
+                      value={values.privacy}
+                      onChange={(value) =>
+                        setFieldValue("privacy", value, false)
+                      }
+                      placeholder="Choose one privacy setting"
+                    >
+                      <Select.Option font="14px" value="public">
+                        Public
+                      </Select.Option>
+                      <Select.Option font="14px" value="private">
+                        Private
+                      </Select.Option>
+                    </Select>
+                    <Field
+                      as={Textarea}
+                      name="bio"
+                      placeholder="Biography"
+                      height={8}
+                      width="100%"
+                    />
+                    <Field
+                      as={Input}
+                      name="twitter"
+                      placeholder="Twitter username"
+                      icon={
+                        <Twitter size={16} color={theme.palette.accents_4} />
+                      }
+                      width="100%"
+                    />
+                    <Field
+                      as={Input}
+                      name="github"
+                      placeholder="GitHub username"
+                      icon={
+                        <Github size={16} color={theme.palette.accents_4} />
+                      }
+                      width="100%"
+                    />
+                    <Field
+                      as={Input}
+                      name="instagram"
+                      placeholder="Instagram username"
+                      icon={
+                        <Instagram size={16} color={theme.palette.accents_4} />
+                      }
+                      width="100%"
+                    />
+                    <Button
+                      loading={isSubmitting}
+                      type="secondary"
+                      w="100%"
+                      htmlType="submit"
+                    >
+                      Update Profile
+                    </Button>
+                    <Fieldset>
+                      <Fieldset.Title>Headless API Access</Fieldset.Title>
+                      <Fieldset.Subtitle>
+                        Use the access token with our API to access your iota
+                        content.
+                        <Snippet
+                          text="yarn add iota-client"
+                          width="100%"
+                          mt={1}
+                        />
+                        <Link icon color mt={1}>
+                          View Documentation
+                        </Link>
+                        {/* <div
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -216,13 +287,13 @@ const Dashboard: NextPage = () => {
                     Generate Key
                   </Button>
                 </div> */}
-                </Fieldset.Subtitle>
-                <Fieldset.Footer>Iota Client API</Fieldset.Footer>
-              </Fieldset>
-              <Button type="secondary" w="100%">
-                Update Profile
-              </Button>
-            </div>
+                      </Fieldset.Subtitle>
+                      <Fieldset.Footer>Iota Client API</Fieldset.Footer>
+                    </Fieldset>
+                  </Form>
+                )}
+              </Formik>
+            ) : null}
           </Tabs.Item>
         </Tabs>
       </Page>
