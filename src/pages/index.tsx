@@ -2,15 +2,19 @@ import {
   Button,
   ButtonDropdown,
   Code,
+  Divider,
+  Fieldset,
   Input,
   Link,
   Page,
+  Select,
+  Snippet,
   Tabs,
   Text,
   Textarea,
   useTheme,
 } from "@geist-ui/core";
-import { Github } from "@geist-ui/icons";
+import { Github, Instagram, Twitter } from "@geist-ui/icons";
 import { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 
@@ -20,7 +24,7 @@ const Home: NextPage = () => {
 
   if (!session) {
     return (
-      <Page>
+      <Page width={40}>
         <Page.Content>
           <Text h3>My Iota</Text>
           <Text type="secondary" mb={2}>
@@ -89,7 +93,53 @@ const Home: NextPage = () => {
             }}
           >
             <Input placeholder="Name" width="100%" />
+            <Select placeholder="Choose one privacy setting">
+              <Select.Option value="public">Public</Select.Option>
+              <Select.Option value="private">Private</Select.Option>
+            </Select>
             <Textarea placeholder="Biography" height={8} width="100%" />
+            <Input
+              placeholder="Twitter username"
+              icon={<Twitter size={16} color={theme.palette.accents_4} />}
+              width="100%"
+            />
+            <Input
+              placeholder="GitHub username"
+              icon={<Github size={16} color={theme.palette.accents_4} />}
+              width="100%"
+            />
+            <Input
+              placeholder="Instagram username"
+              icon={<Instagram size={16} color={theme.palette.accents_4} />}
+              width="100%"
+            />
+            <Fieldset>
+              <Fieldset.Title>Headless API Access</Fieldset.Title>
+              <Fieldset.Subtitle>
+                Use the access token with our API to access your iota content.
+                <Snippet text="yarn add iota-client" width="100%" mt={1} />
+                <Link icon color mt={1}>
+                  View Documentation
+                </Link>
+                {/* <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginTop: theme.layout.gap,
+                  }}
+                >
+                  <Input.Password
+                    w="100%"
+                    placeholder="Generate a key first!"
+                    disabled
+                  />
+                  <Button type="secondary" ml={1} scale={2 / 3}>
+                    Generate Key
+                  </Button>
+                </div> */}
+              </Fieldset.Subtitle>
+              <Fieldset.Footer>Iota Client API</Fieldset.Footer>
+            </Fieldset>
             <Button type="success" w="100%">
               Update Profile
             </Button>
